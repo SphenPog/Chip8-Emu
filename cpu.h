@@ -24,8 +24,11 @@ void reset_cpu(); // set default values (register addresses/fonts)
 
 void fetch_instruction();
 
-void decode_instruction(); // not sure if necessary yet
-
 void execute_instruction();
+
+typedef void (*cpu_execute_op)(void);
+
+//instructions
+void clear_screen();
 
 #endif

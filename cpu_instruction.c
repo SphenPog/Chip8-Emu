@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include "cpu_instruction.h"
+#include "cpu.h"
 
-const struct cpu_instruction instructions[35] = {
-    { "0NNN", 0, },  //0x00
+const struct chip_cpu_instruction instructions[35] = {
+    { "0NNN", 0, clear_screen},  //0x00
     { "00E0", 0, },  //0x00
     { "00EE", 0, },  //0x00
     { "1NNN", 0, },  //0x01

@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include "memory.h"
+#include "cpu_instruction.h"
 #include <stdio.h>
 
 uint8_t registers[16];
@@ -13,6 +14,9 @@ uint8_t soundTimer;
 uint8_t keypad[16];
 uint32_t video[64 * 32];
 uint16_t opcode = 0; // instruction
+
+void *cpu_current_instruction_execute = NULL;
+uint32_t cpu_instruction_counter = 0;
 
 uint8_t fonts[80] = {0xF0, 0x90, 0x90, 0x90, 0xF0, //0
                      0x20, 0x60, 0x20, 0x20, 0x70, //1
@@ -74,15 +78,20 @@ void reset_cpu()
 void fetch_instruction()
 {
     opcode = memory[pc++];
-    return;
-}
-
-void decode_instruction()
-{
-    return;
+    struct chip_cpu_instruction instruction = instructions[opcode];
+    cpu_current_instruction_execute = instruction.execute;
 }
 
 void execute_instruction()
 {
-    return;
+    if(!cpu_current_instruction_execute) {
+        struct chip_cpu_instruction instruction = instructions[opcode];
+        printf("Unknown instruction at: %.2X (%s), count %i\n", pc, instruction.disassemply, cpu_instruction_counter);
+        return;
+    }
+    ((cpu_execute_op)cpu_current_instruction_execute)();
+}
+
+void clear_screen(){
+
 }
