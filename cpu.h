@@ -1,5 +1,6 @@
 #include "memory.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef CPU_H
 #define CPU_H
@@ -24,11 +25,12 @@ void reset_cpu(); // set default values (register addresses/fonts)
 
 void fetch_instruction();
 
-void execute_instruction();
+bool execute_instruction();
 
 typedef void (*cpu_execute_op)(void);
 
 //instructions
+void test();
 void clear_screen();
 
 #endif

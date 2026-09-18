@@ -2,6 +2,9 @@
 #include "memory.h"
 #include "cpu_instruction.h"
 #include <stdio.h>
+#include <stdbool.h>
+//temp
+#include <stdlib.h>
 
 uint8_t registers[16];
 uint8_t memory[4096]; // 4kb ram memory
@@ -37,7 +40,7 @@ uint8_t fonts[80] = {0xF0, 0x90, 0x90, 0x90, 0xF0, //0
 
 void load_into_memory(const uint8_t *buffer, size_t size)
 {
-    memcpy(memory, buffer, size);
+    memcpy(memory + 0x200, buffer, size);
 }
 
 void print_memory()
@@ -45,12 +48,7 @@ void print_memory()
     printf("Current working memory: \n");
     printf("---------------------------\n");
     for (size_t i = 0; i < 4096; i++)
-    {
-        if (memory[i] == 0x00)
-        {
-            continue;
-        }
-        
+    {   
         printf("%02X ", memory[i]);
     }
     printf("\n---------------------------\n");
@@ -60,37 +58,40 @@ void print_memory()
 
 void reset_cpu()
 {
-    /*
-    int temp = 0x50;
-    for (size_t i = 0; i < 80; i++)
-    {
-        memory[temp++] = fonts[i];
-        printf("temp value is now: 0x%x\n", temp);
-    }
-        */
+    //load fonts
+    memcpy(memory + 0x50, fonts, 80);   
 }
 
 void fetch_instruction()
 {
-    opcode = memory[pc++];
-    chip_cpu_instruction instruction = instructions[opcode];
+    printf("Accessing memory at %u.", pc);
+    opcode = (memory[pc] << 8 | memory[pc + 1]);
+    printf(" value is %2X.\n", opcode);
+    pc += 2;
+    chip_cpu_instruction instruction = getInstruction(opcode);
     cpu_current_instruction_execute = instruction.execute;
 }
 
-void execute_instruction()
+bool execute_instruction()
 {
     if(!cpu_current_instruction_execute) {
         chip_cpu_instruction instruction = getInstruction(opcode);
         printf("opcode: %u\n", opcode);
         printf("Unknown instruction at: 0x%2X (%s), count %i\n", pc, instruction.disassemply, cpu_instruction_counter);
-        return;
+        return false;
     }
     ((cpu_execute_op)cpu_current_instruction_execute)();
+    return true;
 }
 
 /* ------------------------------
     instruction implementations
    ------------------------------ */
+void test() {
+    printf("reached the test instruction execution.\nexiting...\n");
+    exit(EXIT_FAILURE);
+}
+
 void clear_screen(){
 
 }

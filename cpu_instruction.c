@@ -3,7 +3,7 @@
 #include "cpu.h"
 
 const chip_cpu_instruction instructions[35] = {
-    { "0NNN", NULL},  //0
+    { "0NNN", test},  //0
     { "00E0", clear_screen},  //1
     { "00EE", },  //2
     { "1NNN", },  //3

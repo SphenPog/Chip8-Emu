@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "cpu.h"
 
 #define MAX_MEMORY_SIZE 0x1000 // 4 KB
@@ -14,14 +15,14 @@
 const unsigned int START_ADDRESS = 0x200;
 extern uint8_t memory[MAX_MEMORY_SIZE];
 
-void load_rom(char const *filename) {
+bool load_rom(char const *filename) {
     FILE *rom_file;
 
     rom_file = fopen(filename, "r");
 
     if (rom_file == NULL) {
         perror("Error opening file.");
-        return;
+        return false;
     }
 
     fseek(rom_file, 0, SEEK_END);
@@ -32,6 +33,7 @@ void load_rom(char const *filename) {
     {
         perror("File larger then maximum Memory");
         fclose(rom_file);
+        return false;
     }
     
 
@@ -40,19 +42,23 @@ void load_rom(char const *filename) {
     {
         fclose(rom_file);
         perror("Error creating buffer.");
-        return;
+        return false;
     }
     
-    for (size_t i = 0; i < (size_t)size; i++)
-    {
-        fread(&buffer[i], 1, 1, rom_file);
+    size_t n = fread(buffer, 1, size, rom_file);
+
+    if (n != size) {
+        fprintf(stderr, "Short read: got %zu of %ld bytes\n", n, size);
+        free(buffer);
+        fclose(rom_file);
+        return false;
     }
     
     load_into_memory(buffer, size);
     free(buffer);
     fclose(rom_file);
 
-    return;
+    return true;
 }
 
 #endif
