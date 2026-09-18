@@ -44,19 +44,14 @@ void print_memory()
 {
     printf("Current working memory: \n");
     printf("---------------------------\n");
-    for (size_t i = 0; i < 4096; i += 16)
+    for (size_t i = 0; i < 4096; i++)
     {
-        for (size_t j = 0; j < 16; j++)
+        if (memory[i] == 0x00)
         {
-            if (i + j < 4096)
-                if (memory[i + j] == 0x00)
-                {
-                }
-                else
-                    printf("%02X ", memory[i + j]);
-            else
-                printf("   ");
+            continue;
         }
+        
+        printf("%02X ", memory[i]);
     }
     printf("\n---------------------------\n");
 
@@ -85,8 +80,9 @@ void fetch_instruction()
 void execute_instruction()
 {
     if(!cpu_current_instruction_execute) {
-        struct chip_cpu_instruction instruction = instructions[opcode];
-        printf("Unknown instruction at: %.2X (%s), count %i\n", pc, instruction.disassemply, cpu_instruction_counter);
+        struct chip_cpu_instruction instruction = getInstruction(opcode);
+        printf("opcode: %u\n", opcode);
+        printf("Unknown instruction at: 0x%2X (%s), count %i\n", pc, instruction.disassemply, cpu_instruction_counter);
         return;
     }
     ((cpu_execute_op)cpu_current_instruction_execute)();
