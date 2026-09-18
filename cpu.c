@@ -73,14 +73,14 @@ void reset_cpu()
 void fetch_instruction()
 {
     opcode = memory[pc++];
-    struct chip_cpu_instruction instruction = instructions[opcode];
+    chip_cpu_instruction instruction = instructions[opcode];
     cpu_current_instruction_execute = instruction.execute;
 }
 
 void execute_instruction()
 {
     if(!cpu_current_instruction_execute) {
-        struct chip_cpu_instruction instruction = getInstruction(opcode);
+        chip_cpu_instruction instruction = getInstruction(opcode);
         printf("opcode: %u\n", opcode);
         printf("Unknown instruction at: 0x%2X (%s), count %i\n", pc, instruction.disassemply, cpu_instruction_counter);
         return;
@@ -88,6 +88,9 @@ void execute_instruction()
     ((cpu_execute_op)cpu_current_instruction_execute)();
 }
 
+/* ------------------------------
+    instruction implementations
+   ------------------------------ */
 void clear_screen(){
 
 }

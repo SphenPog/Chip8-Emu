@@ -29,6 +29,7 @@ int SDLCALL chip_run_emu(int argc, char *argv[])
     reset_cpu();
     fetch_instruction();
     execute_instruction();
+    
 
     SDL_Delay(3000);
     SDL_DestroyWindow(win);

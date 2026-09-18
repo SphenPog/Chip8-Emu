@@ -2,8 +2,8 @@
 #include "cpu_instruction.h"
 #include "cpu.h"
 
-const struct chip_cpu_instruction instructions[35] = {
-    { "0NNN", },  //0
+const chip_cpu_instruction instructions[35] = {
+    { "0NNN", NULL},  //0
     { "00E0", clear_screen},  //1
     { "00EE", },  //2
     { "1NNN", },  //3
@@ -40,17 +40,18 @@ const struct chip_cpu_instruction instructions[35] = {
     { "FX65", }   //34
 };
 
-struct chip_cpu_instruction getInstruction(uint16_t opcode){
+ chip_cpu_instruction getInstruction(uint16_t opcode){
+    uint16_t NN;
     switch (opcode & 0xF000)
     {
     case 0x0000:
-        uint16_t NN = opcode & 0x00FF;
+        NN = opcode & 0x00FF;
 
         if (NN == 0x00E0) // clear screen (0x00E0)
         {return instructions[1];}
         else if (NN == 0x00EE) // return from subroutine (0x00EE) 
         {return instructions[2];}
-        else //Execute machine language at NNN (0x0NNN)
+        else //Execute machine language at NNN (0x0NNN) (no need to implement)
         {return instructions[0];} 
     case 0x1000:
         return instructions[3]; //jump to address NNN (0x1NNN)
@@ -110,7 +111,7 @@ struct chip_cpu_instruction getInstruction(uint16_t opcode){
                                  //set VF to 01 if any pixels are changed to unset,
                                  //set VF to 00 otherwise (0xDXYN)
     case 0xE000:
-        uint16_t NN = opcode & 0x00FF;
+            NN = opcode & 0x00FF;
 
         if (NN == 0x009E) {
             return instructions[24]; //skip instruction if key of hex value in VX is pressed (0xEX9E)
@@ -118,7 +119,7 @@ struct chip_cpu_instruction getInstruction(uint16_t opcode){
             return instructions[25]; //skip instruction if key of hex value in VX is not pressed (0xEXA1)
         }
     case 0xF000:
-        uint16_t NN = opcode & 0x00FF;
+            NN = opcode & 0x00FF;
 
         switch (NN)
         {
